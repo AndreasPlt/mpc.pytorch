@@ -12,7 +12,6 @@ import numpy.testing as npt
 
 import cvxpy as cp
 
-from block import block
 
 from mpc.dynamics import NNDynamics
 

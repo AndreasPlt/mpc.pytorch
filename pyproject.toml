@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mpc"
+version = "0.0.6"
+description = "A fast and differentiable MPC solver for PyTorch."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [{ name = "Brandon Amos", email = "brandon.amos.cs@gmail.com" }]
+urls = { Homepage = "https://github.com/locuslab/mpc.pytorch" }
+dependencies = [
+    "numpy>=1,<2",
+    "torch",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "cvxpy",
+    "numdifftools",
+    "scipy",
+    "psutil",
+]
