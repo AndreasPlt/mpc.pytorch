@@ -74,7 +74,7 @@ def get_data_maybe(x):
     return x if not isinstance(x, Variable) else x.data
 
 
-_seen_tables = []
+_seen_tables = set()
 def table_log(tag, d):
     # TODO: There's probably a better way to handle formatting here,
     # or a better way altogether to replace this quick hack.
@@ -85,7 +85,7 @@ def table_log(tag, d):
 
     if tag not in _seen_tables:
         print_row(map(operator.itemgetter(0), d))
-        _seen_tables.append(tag)
+        _seen_tables.add(tag)
 
     s = []
     for di in d:

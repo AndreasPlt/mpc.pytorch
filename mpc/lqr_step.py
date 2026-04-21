@@ -278,8 +278,12 @@ def LQRStep(n_state,
             if no_op_forward:
                 ctx.save_for_backward(
                     x_init, C, c, F, f, current_x, current_u)
-                ctx.current_x, ctx.current_u = current_x, current_u
-                return current_x, current_u
+                # Return clones rather than the same objects captured
+                # by the closure. Returning the same objects creates a
+                # reference cycle (tensor → C++ grad_fn → class →
+                # closure → tensor) that Python's GC cannot break
+                # because the C++ autograd nodes are invisible to it.
+                return current_x.clone(), current_u.clone()
 
             if delta_space:
                 # Taylor-expand the objective to do the backward pass in
@@ -303,6 +307,11 @@ def LQRStep(n_state,
             Ks, ks, n_total_qp_iter = lqr_backward(ctx, C, c_back, F, f_back)
             new_x, new_u, for_out = lqr_forward(ctx,
                 x_init, C, c, F, f, Ks, ks)
+
+            # Release references no longer needed — backward reads from
+            # saved_tensors, not from these attributes.
+            del ctx.current_x, ctx.current_u
+
             ctx.save_for_backward(x_init, C, c, F, f, new_x, new_u)
 
             return new_x, new_u, torch.Tensor([n_total_qp_iter]), \
